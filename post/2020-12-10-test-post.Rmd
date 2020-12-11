@@ -1,0 +1,66 @@
+---
+title: Panagrams and Phython
+author: ''
+date: '2020-12-10'
+slug: Panagrams
+categories: []
+tags: []
+description: ''
+---
+
+# Panagrams and Phython
+
+So, we have also been learning about the coding language phython in my Computational Biology class over the last two weeks and one of the functions we have made in class is count_chars. I think function is  really cool because it can check validity of panagrams without having to do it manually.A panagram is a sentence in which every letter of the english alphabet is used in the sentence. A really popular panagram is the sentence,"The quick brown fox jumps over the lazy dog". If you don't believe me, test it out in phython!
+
+![](/img/BrownFox.jpeg)
+Panagram imagery.
+
+##The Code
+So to discover that the validity of a panagram, the newly created function of count_chars was made below. This code is able to count the amount of characters in each string.
+
+```{python}
+panagram="The quick brown fox jumps over the lazy dog"
+
+def count_chars(panagram):
+ counts = {} 
+ for c in panagram: 
+  if c in counts: 
+    counts[c]+=1 
+  else:
+    counts[c]=1 
+ for c in counts:
+  print(c, "appears", counts[c],"times")
+ 
+count_chars(panagram)
+```
+
+See? Every letter appears at least once in this sentence. Now you may ask yourself, why are panagrams relevant and what is their purpose? This answer is incredibly simple. Panagrams are used to test out any typewriter/keyboard technology in a natural way, as if to simulate typewriting. Several other panagrams can be used such as:
+
+-Sphinx of black quartz, judge my vow.
+-The five boxing wizards jump quickly
+-Sympathizing would fix Quaker objectives.
+
+And my personal favorite:
+-This Pangram contains four a’s, one b, two c’s, one d, thirty e’s, six f’s, five g’s, seven h’s, eleven i’s, one j, one k, two l’s, two m’s, eighteen n’s, fifteen o’s, two p’s, one q, five r’s, twenty-seven s’s, eighteen t’s, two u’s, seven v’s, eight w’s, two x’s, three y’s, & one z.
+
+That's all I have today, besides a motivational message via R and Phython. So remember to:
+```{r}
+library(reticulate)
+Be<-"Take"
+```
+
+```{python}
+Bold_and ="Chances"
+print(r.Be,Bold_and)
+
+```
+So make sure to live a life worth living!
+
+Sincerely,
+Devin K. Williams
+
+
+
+
+
+

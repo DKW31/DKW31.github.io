@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Devin Williams" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project 2 </title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project2/">Project 2 </a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         December 9, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>Devin Williams DKW732</p>
+<p>Introduction: My original data consisted of 60 observations with 5 variables. The 5 variables were State, NFL Team, Superbowl appearances, Superbowl wins, and the conference,NFC or AFC, of the football team. I then added Superbowl win percentage, population of state,and a binary column with 1 indicating AFC conference and 0 indicating NFC conference. I then deleted the observations that did not have a football team or has never been to a Superbowl.</p>
+<pre class="r"><code>library(readr)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ dplyr   1.0.2
+## ✓ tibble  3.0.3     ✓ stringr 1.4.0
+## ✓ tidyr   1.1.1     ✓ forcats 0.5.0
+## ✓ purrr   0.3.4</code></pre>
+<pre><code>## ── Conflicts ─────────────────
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(dplyr)
+library(rstatix)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rstatix&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre class="r"><code>library(sandwich); library(lmtest)</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>FBall &lt;- read_csv(&quot;Project 2 Football Just Conf - Sheet1.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   State = col_character(),
+##   NFL_Team = col_character(),
+##   SB_Appearances = col_double(),
+##   SB_Wins = col_double(),
+##   Conference = col_character()
+## )</code></pre>
+<pre class="r"><code>State_POP &lt;- read_csv(&quot;State POP - Sheet1 (1).csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   State = col_character(),
+##   Population = col_number()
+## )</code></pre>
+<pre class="r"><code>FBall&lt;-FBall%&gt;%full_join(State_POP)</code></pre>
+<pre><code>## Joining, by = &quot;State&quot;</code></pre>
+<pre class="r"><code>FBall&lt;-FBall%&gt;%filter(!is.na(NFL_Team))
+FBall&lt;-FBall%&gt;%mutate(SB_W_PCT=SB_Wins/SB_Appearances)
+FBall&lt;-FBall%&gt;%filter(!is.na(NFL_Team))
+FBall&lt;-FBall%&gt;%mutate(SB_W_PCT=SB_Wins/SB_Appearances)
+FBall&lt;-FBall%&gt;%filter(!is.na(SB_W_PCT))
+FBall&lt;-FBall%&gt;%mutate(AFC_or_NFC=ifelse(FBall$Conference==&quot;AFC&quot;,1,0)) 
+glimpse(FBall)</code></pre>
+<pre><code>## Rows: 28
+## Columns: 8
+## $ State          &lt;chr&gt; &quot;AZ&quot;, &quot;CA&quot;, &quot;CA&quot;, &quot;CA&quot;, &quot;CO&quot;, &quot;FL&quot;, &quot;FL&quot;, &quot;GA&quot;, &quot;IL&quot;, …
+## $ NFL_Team       &lt;chr&gt; &quot;Cardinals&quot;, &quot;Rams&quot;, &quot;Chargers&quot;, &quot;49ers&quot;, &quot;Broncos&quot;, &quot;…
+## $ SB_Appearances &lt;dbl&gt; 1, 4, 1, 7, 8, 5, 1, 2, 2, 4, 1, 2, 11, 4, 3, 5, 5, 1,…
+## $ SB_Wins        &lt;dbl&gt; 0, 1, 0, 5, 3, 2, 1, 0, 1, 2, 1, 2, 6, 0, 2, 3, 4, 1, …
+## $ Conference     &lt;chr&gt; &quot;NFC&quot;, &quot;NFC&quot;, &quot;AFC&quot;, &quot;NFC&quot;, &quot;AFC&quot;, &quot;AFC&quot;, &quot;NFC&quot;, &quot;NFC&quot;…
+## $ Population     &lt;dbl&gt; 7278717, 39512223, 39512223, 39512223, 5758736, 214777…
+## $ SB_W_PCT       &lt;dbl&gt; 0.0000000, 0.2500000, 0.0000000, 0.7142857, 0.3750000,…
+## $ AFC_or_NFC     &lt;dbl&gt; 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, …</code></pre>
+<pre class="r"><code>FBall%&gt;%summarize_all(n_distinct)</code></pre>
+<pre><code>## # A tibble: 1 x 8
+##   State NFL_Team SB_Appearances SB_Wins Conference Population SB_W_PCT
+##   &lt;int&gt;    &lt;int&gt;          &lt;int&gt;   &lt;int&gt;      &lt;int&gt;      &lt;int&gt;    &lt;int&gt;
+## 1    22       28              8       7          2         22       14
+## # … with 1 more variable: AFC_or_NFC &lt;int&gt;</code></pre>
+<pre class="r"><code>#1
+group&lt;-FBall$Conference
+DV &lt;- FBall %&gt;% select(SB_Wins,SB_Appearances, SB_W_PCT)
+sapply(split(DV,group), mshapiro_test)</code></pre>
+<pre><code>##           AFC       NFC      
+## statistic 0.9156795 0.8935484
+## p.value   0.2192161 0.0758993</code></pre>
+<pre class="r"><code>box_m(DV,group)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   statistic p.value parameter method                                            
+##       &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                                             
+## 1      4.18   0.653         6 Box&#39;s M-test for Homogeneity of Covariance Matric…</code></pre>
+<pre class="r"><code>man1&lt;-manova(cbind(SB_Wins,SB_Appearances,SB_W_PCT)~Conference, data=FBall)
+summary(man1)</code></pre>
+<pre><code>##            Df   Pillai approx F num Df den Df Pr(&gt;F)
+## Conference  1 0.026403  0.21695      3     24 0.8837
+## Residuals  26</code></pre>
+<pre class="r"><code>summary.aov(man1)</code></pre>
+<pre><code>##  Response SB_Wins :
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Conference   1  0.534  0.5341  0.1398 0.7115
+## Residuals   26 99.323  3.8201               
+## 
+##  Response SB_Appearances :
+##             Df  Sum Sq Mean Sq F value Pr(&gt;F)
+## Conference   1   3.388  3.3875  0.4786 0.4952
+## Residuals   26 184.041  7.0785               
+## 
+##  Response SB_W_PCT :
+##             Df Sum Sq  Mean Sq F value Pr(&gt;F)
+## Conference   1 0.0015 0.001509  0.0114 0.9158
+## Residuals   26 3.4440 0.132463</code></pre>
+<pre class="r"><code>FBall%&gt;%group_by(Conference)%&gt;%summarize(mean(SB_Wins),mean(SB_Appearances),mean(SB_W_PCT))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   Conference `mean(SB_Wins)` `mean(SB_Appearances)` `mean(SB_W_PCT)`
+##   &lt;chr&gt;                &lt;dbl&gt;                  &lt;dbl&gt;            &lt;dbl&gt;
+## 1 AFC                   2.08                   4.23            0.449
+## 2 NFC                   1.8                    3.53            0.464</code></pre>
+<pre class="r"><code>pairwise.t.test(FBall$SB_Appearances, FBall$SB_Wins,FBall$SB_W_PCT, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## Warning in if (paired &amp; pool.sd) stop(&quot;pooling of SD is incompatible with paired
+## tests&quot;): the condition has length &gt; 1 and only the first element will be used</code></pre>
+<pre><code>## Warning in if (pool.sd) {: the condition has length &gt; 1 and only the first
+## element will be used</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with non-pooled SD 
+## 
+## data:  FBall$SB_Appearances and FBall$SB_Wins 
+## 
+##   0       1       2       3       4       5      
+## 1 0.97805 -       -       -       -       -      
+## 2 0.12987 0.13725 -       -       -       -      
+## 3 0.04211 0.04172 0.11134 -       -       -      
+## 4 0.00033 0.00080 0.10273 0.42265 -       -      
+## 5 0.00447 0.00405 0.00985 0.27884 0.12567 -      
+## 6 0.10473 0.10334 0.11230 0.19844 0.20483 0.39587
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>1-.95^6</code></pre>
+<pre><code>## [1] 0.2649081</code></pre>
+<pre class="r"><code>.05/6</code></pre>
+<pre><code>## [1] 0.008333333</code></pre>
+<p>All of my Manova assumptions were met.There also were not any significant differences in the means of my numerical values when grouped by Conference.A total of 6 tests was ran, a manova, an anova and four post hoc tests. This does not include the assumption tests.There is a 26.5% chance a type 1 error was made.The bonfferonii correction should be .008 (still significant).The Manova assumptions were met because the NFL divided up their teams equally by conference. There is a significant difference in teams that have had 3-5 SB appearancesand 0 wins,3-5 SB appearances and only 1 win.</p>
+<pre class="r"><code>summary(aov(SB_W_PCT~Conference,data=FBall))</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## Conference   1  0.002 0.00151   0.011  0.916
+## Residuals   26  3.444 0.13246</code></pre>
+<pre class="r"><code>OBS_F&lt;-.011
+set.seed(19)
+Fs&lt;-replicate(20,{ #do everything in curly braces 5000 times and save the output
+new&lt;-FBall%&gt;%mutate(SB_W_PCT=sample(SB_W_PCT)) #randomly permute response variable (len)
+#compute the F-statistic by hand
+SSW&lt;- new%&gt;%group_by(Conference)%&gt;%summarize(SSW=sum((SB_W_PCT-mean(SB_W_PCT))^2))%&gt;%
+summarize(sum(SSW))%&gt;%pull
+SSB&lt;- new%&gt;%mutate(mean=mean(SB_W_PCT))%&gt;%group_by(Conference)%&gt;%mutate(groupmean=mean(SB_W_PCT))%&gt;%
+summarize(SSB=sum((mean-groupmean)^2))%&gt;%summarize(sum(SSB))%&gt;%pull
+(SSB/1)/(SSW/14) #compute F statistic (num df = K-1 = 3-1, denom df = N-K = 60-3)
+})%&gt;%glimpse</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)
+## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>##  num [1:20] 0.41687 0.14395 0.56021 0.31051 0.00127 ...</code></pre>
+<pre class="r"><code>hist(Fs, prob=T); abline(v = OBS_F, col=&quot;red&quot;,add=T)</code></pre>
+<pre><code>## Warning in int_abline(a = a, b = b, h = h, v = v, untf = untf, ...): &quot;add&quot; is
+## not a graphical parameter</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>mean(Fs&gt;OBS_F) #p-value</code></pre>
+<pre><code>## [1] 0.8</code></pre>
+<p>The null hypothesis is that there is not a difference between SB win percentage means between conferences. The alternative hypothesis is that there is a difference between SB win percentage means between conferences.The p-value is effectively .8, which means I accept my null hypothesis. Of my 5000 F statistics, some produced an F-Statistic higher than my observed so there is not a significant relationship between conference and SB win percentage. My replication is at 20 instead of at 5000, due to reducing the number of errors in the html.</p>
+<pre class="r"><code>#3
+FBall$SBA_c=FBall$SB_Appearances-mean(FBall$SB_Appearances)
+FBall$SBW_c&lt;-FBall$SB_Wins-mean(FBall$SB_Wins)
+Fbfit&lt;-lm(SB_Wins~Conference*SBA_c, data= FBall)
+summary(Fbfit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = SB_Wins ~ Conference * SBA_c, data = FBall)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.14503 -0.55475  0.05039  0.67112  1.76398 
+## 
+## Coefficients:
+##                     Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)          1.86290    0.28277   6.588 8.18e-07 ***
+## ConferenceNFC        0.17651    0.38710   0.456    0.653    
+## SBA_c                0.57282    0.09302   6.158 2.31e-06 ***
+## ConferenceNFC:SBA_c  0.16653    0.15566   1.070    0.295    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.012 on 24 degrees of freedom
+## Multiple R-squared:  0.7539, Adjusted R-squared:  0.7232 
+## F-statistic: 24.51 on 3 and 24 DF,  p-value: 1.745e-07</code></pre>
+<p>After mean centering the Superbowl appearances,the odss of having Superbowl wins go up if the team is from the NFC by .177,go ups by .57 per Superbowl appearances, and up by .167 if they are NFC and have Superbowl appearnces.</p>
+<pre class="r"><code>ggplot(FBall, aes(SB_Wins,SBA_c, color = Conference)) +geom_point()+geom_smooth(method=&quot;lm&quot;, se=F)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>bptest(Fbfit)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  Fbfit
+## BP = 0.6431, df = 3, p-value = 0.8865</code></pre>
+<pre class="r"><code>resids&lt;-Fbfit$residuals
+fitvals&lt;-Fbfit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color=&#39;red&#39;)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre class="r"><code>ks.test(resids, &quot;pnorm&quot;, mean=0, sd(resids)) </code></pre>
+<pre><code>## Warning in ks.test(resids, &quot;pnorm&quot;, mean = 0, sd(resids)): ties should not be
+## present for the Kolmogorov-Smirnov test</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.083951, p-value = 0.9891
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>(sum((FBall$SB_Wins-mean(FBall$SB_Wins))^2)-sum(Fbfit$residuals^2))/sum((FBall$SB_Wins-mean(FBall$SB_Wins))^2)</code></pre>
+<pre><code>## [1] 0.7539392</code></pre>
+<p>My data passes assumptions of linearity,normality, and homoskedasticity. My model explains 75% of the variation in the outcome.</p>
+<pre class="r"><code>coeftest(Fbfit)[,1:2]</code></pre>
+<pre><code>##                      Estimate Std. Error
+## (Intercept)         1.8629017 0.28277373
+## ConferenceNFC       0.1765071 0.38710028
+## SBA_c               0.5728218 0.09302478
+## ConferenceNFC:SBA_c 0.1665291 0.15565503</code></pre>
+<pre class="r"><code>coeftest(Fbfit, vcov=vcovHC(Fbfit))[,1:2]</code></pre>
+<pre><code>##                      Estimate Std. Error
+## (Intercept)         1.8629017 0.30032087
+## ConferenceNFC       0.1765071 0.40051388
+## SBA_c               0.5728218 0.09551774
+## ConferenceNFC:SBA_c 0.1665291 0.13688763</code></pre>
+<p>The standard errors only slightly changed when robust and are not significant.</p>
+<pre class="r"><code>set.seed(4999)
+samp_distn&lt;-replicate(5000, {
+boot_FB &lt;- sample_frac(FBall, replace=TRUE) #take bootstrap sample of rows
+fit &lt;-lm(SB_Wins~Conference*SBA_c, data= boot_FB)  #fit model on bootstrap sample
+coef(fit) #save coefs
+})
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) ConferenceNFC     SBA_c ConferenceNFC:SBA_c
+## 1   0.2864812     0.3980608 0.1079194                  NA</code></pre>
+<pre class="r"><code>class_diag &lt;- function(probs,truth){
+#CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+f1=2*(sens*ppv)/(sens+ppv)
+if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+#CALCULATE EXACT AUC
+ord&lt;-order(probs, decreasing=TRUE)
+probs &lt;- probs[ord]; truth &lt;- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+n &lt;- length(TPR)
+auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,f1,auc)
+}</code></pre>
+<pre class="r"><code>#5
+set.seed(4999)
+Fbfit2&lt;-glm(AFC_or_NFC~SB_Wins+SB_Appearances, data=FBall, family=&quot;binomial&quot;)
+summary(Fbfit2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = AFC_or_NFC ~ SB_Wins + SB_Appearances, family = &quot;binomial&quot;, 
+##     data = FBall)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.2755  -1.0949  -0.9347   1.2185   1.4413  
+## 
+## Coefficients:
+##                Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)     -0.6423     0.7283  -0.882    0.378
+## SB_Wins         -0.1771     0.3984  -0.444    0.657
+## SB_Appearances   0.2175     0.2948   0.738    0.461
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 38.673  on 27  degrees of freedom
+## Residual deviance: 37.966  on 25  degrees of freedom
+## AIC: 43.966
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>probs&lt;-predict(Fbfit2,type=&quot;response&quot;) #get predicted probs from the model
+table(predict=as.numeric(probs&gt;.5),truth=FBall$AFC_or_NFC)%&gt;%addmargins%&gt;%t()</code></pre>
+<pre><code>##      predict
+## truth  0  1 Sum
+##   0   12  3  15
+##   1    8  5  13
+##   Sum 20  8  28</code></pre>
+<pre class="r"><code>class_diag(probs,FBall$AFC_or_NFC)</code></pre>
+<pre><code>##         acc      sens spec   ppv        f1       auc
+## 1 0.6071429 0.3846154  0.8 0.625 0.4761905 0.5589744</code></pre>
+<p>The logodds of being AFC goes down .1771 per Suber Bowl Win, and up .2175 per Superbowl appearance.The accuracy is .607 which means that it was able to correctly classify 60 cases. The tpr,tnr,ppv, and auc was .385, .8,.625, and .559, respectively. This means that the model is bad based off the auc classificiation is bad. This model could tell which team were AFC pretty well, but could not tell which teams were NFC that well. The precision of this test was also not the greatest.</p>
+<pre class="r"><code>FBall$logit&lt;-predict(Fbfit2) #get predicted log-odds (logits)
+
+#plot logit scores for each truth category
+
+
+FBall%&gt;%mutate(Conf=factor(Conference,levels=c(&quot;AFC&quot;,&quot;NFC&quot;)))%&gt;%ggplot(aes(logit, fill=Conf))+geom_density(alpha=.3)+
+  geom_vline(xintercept=0,lty=2)</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>library(plotROC)
+ROCplot&lt;-ggplot(FBall)+geom_roc(aes(d=AFC_or_NFC,m=probs), n.cuts=0) 
+
+ROCplot</code></pre>
+<p><img src="../../project/project2_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>#as soon as you build your ROC curve, you can compute the AUC with
+calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.5589744</code></pre>
+<p>This model is bad due to it having a low auc of .559.</p>
+<pre class="r"><code>#6
+Fbfit3&lt;-lm(AFC_or_NFC~SB_W_PCT+Population+SB_Wins+SB_Appearances,data = FBall,family=&quot;binomial&quot;)</code></pre>
+<pre><code>## Warning: In lm.fit(x, y, offset = offset, singular.ok = singular.ok, ...) :
+##  extra argument &#39;family&#39; will be disregarded</code></pre>
+<pre class="r"><code>probs2&lt;-predict(Fbfit3,type=&quot;response&quot;) #get predicted probs from the model
+class_diag(probs2,FBall$AFC_or_NFC)</code></pre>
+<pre><code>##         acc      sens      spec  ppv        f1       auc
+## 1 0.6785714 0.4615385 0.8666667 0.75 0.5714286 0.6307692</code></pre>
+<pre class="r"><code>set.seed(4999)
+k=5 #choose number of folds
+data&lt;-FBall[sample(nrow(FBall)),] #randomly order rows
+folds&lt;-cut(seq(1:nrow(FBall)),breaks=k,labels=F) #create folds
+diags&lt;-NULL
+for(i in 1:k){
+## Create training and test sets
+train&lt;-data[folds!=i,]
+test&lt;-data[folds==i,]
+truth&lt;-test$AFC_or_NFC ## Truth labels for fold i
+## Train model on training set (all but fold i)
+fit5&lt;-glm(AFC_or_NFC~SB_W_PCT+Population+SB_Wins+SB_Appearances,data=train,family=&quot;binomial&quot;)
+## Test model on test set (fold i)
+probs3&lt;-predict(fit5,newdata = test,type=&quot;response&quot;)
+ #Get diagnostics for fold i
+diags&lt;-rbind(diags,class_diag(probs3,truth))
+}
+summarize_all(diags,mean) #average diagnostics across all k folds</code></pre>
+<pre><code>##    acc      sens      spec       ppv  f1 auc
+## 1 0.28 0.2666667 0.3333333 0.2066667 NaN 0.3</code></pre>
+<p>This model had an acc,tpr,tnr, ppv, and auc of .28,.267,.333,.207, and auc of .3 respectively. All of the classification diagnostics went down from the previous model which represents that the previous model may have been a coincidence with its predicting abilities.An AUC as low as .3 means that this model is very bad for predicting.</p>
+<pre class="r"><code>library(glmnet)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre><code>## Loaded glmnet 4.0-2</code></pre>
+<pre class="r"><code>y&lt;-as.matrix(FBall$AFC_or_NFC) #grab response
+FBall_preds&lt;-model.matrix(AFC_or_NFC~SB_W_PCT+Population+SB_Wins+SB_Appearances,data=FBall)[,-1] #predictors (drop intercept)
+cv&lt;-cv.glmnet(FBall_preds,y,family=&quot;binomial&quot;)</code></pre>
+<pre><code>## Warning: Option grouped=FALSE enforced in cv.glmnet, since &lt; 3 observations per
+## fold</code></pre>
+<pre class="r"><code>lasso_fit&lt;-glmnet(FBall_preds,y,family=&quot;binomial&quot;,lambda=cv$lambda.1se)
+coef(lasso_fit)</code></pre>
+<pre><code>## 5 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                        s0
+## (Intercept)    -0.1431008
+## SB_W_PCT        0.0000000
+## Population      .        
+## SB_Wins         .        
+## SB_Appearances  .</code></pre>
+<p>None of my variables were retained, so I just selected the Superbowl win percentage and ran that in my updated model.</p>
+<pre class="r"><code>set.seed(4999)
+k=5 #choose number of folds
+data&lt;-FBall[sample(nrow(FBall)),] #randomly order rows
+folds&lt;-cut(seq(1:nrow(FBall)),breaks=k,labels=F) #create folds
+diags&lt;-NULL
+for(i in 1:k){
+## Create training and test sets
+train&lt;-data[folds!=i,]
+test&lt;-data[folds==i,]
+truth&lt;-test$AFC_or_NFC ## Truth labels for fold i
+## Train model on training set (all but fold i)
+fit6&lt;-glm(AFC_or_NFC~SB_W_PCT,data=train,family=&quot;binomial&quot;)
+## Test model on test set (fold i)
+probs4&lt;-predict(fit6,newdata = test,type=&quot;response&quot;)
+ #Get diagnostics for fold i
+diags&lt;-rbind(diags,class_diag(probs4,truth))
+}
+summarize_all(diags,mean) #average diagnostics across all k folds</code></pre>
+<pre><code>##    acc      sens      spec  ppv  f1       auc
+## 1 0.28 0.1666667 0.4166667 0.15 NaN 0.2097222</code></pre>
+<p>This model had an acc,tpr,tnr, ppv, and auc of .28,.167,.417,.15, and auc of .20 respectively. The AUC of this model went down significantly to .209, meaning that the model is unlikely to predict anything from the data.</p>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

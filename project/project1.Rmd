@@ -1,0 +1,161 @@
+---
+title: "Project1"
+date: "2020-12-09"
+output:
+  html_document:
+    df_print: paged
+---
+
+Devin Williams DKW732
+Project 1
+
+Introduction:
+The datasets I have chosen to observe are the Fball and State_POP dataset. The Fball dataset contains the variables of State,the state where the NFL team resides if applicable,NFL_Team, the NFL team being analyzed, SB_Appearances, the number of Superbowl appearance for the NFL team, and SB_Wins, the amount of Superbowls won by the NFL team. The State_POP dataset contains the variables of State and Population. These datasets were made by me in a googlesheet after researching the location and Superbowl record of each team, and population of each state.The websites visited for this data were https://state.1keydata.com/nfl-teams-by-state.php,https://www.statista.com/statistics/266516/number-of-super-bowl-wins-by-nfl-team/,https://www.statista.com/statistics/784497/teams-ranked-by-super-bowl-appearances-in-nfl-history/, and https://www.infoplease.com/us/states/state-population-by-rank. The datasets were interesting to me because I find obscure sports trivia reall amusing, and wanted to analyze if larger population areas yielded more Superbowl wins. 
+
+
+```{r}
+library(readr)
+Fball <- read_csv("Copy of Football Team (NO CITY)_NO SBW - Sheet1 (2).csv")
+head(Fball)
+library(readr)
+State_POP <- read_csv("State POP - Sheet1 (1).csv")
+head(State_POP)
+library(tidyverse)
+```
+```{r}
+Football<-Fball%>%full_join(State_POP)
+FBall_States<-Football%>%filter(!is.na(NFL_Team))
+```
+
+I used a full join to join my datasets by the "State" variable because I wanted to keep all of the rows in both bottom and omitted all of the rows that did not have an NFL team. The potenial problem of this is that when trying to find the mean of Superbowl wins or appearances, it does not take into account states without a football team.
+
+```{r}
+FBall_States%>%summarize_all(n_distinct)
+```
+
+
+```{r}
+FBall_States%>%group_by(NFL_Team)%>%summarize(max_SB_wins=max(SB_Wins))%>%arrange(-max_SB_wins)
+```
+
+
+```{r}
+SB_PCT<-FBall_States%>%mutate(SB_W_PCT=SB_Wins/SB_Appearances)
+SB_PCT%>%filter(SB_W_PCT==1)%>%group_by(State,NFL_Team)
+```
+
+
+
+```{r}
+SB_PCT%>%filter(SB_Appearances>0)%>%filter(SB_W_PCT==0)%>%arrange(-SB_Appearances)
+
+```
+
+
+```{r}
+FBall_States %>%group_by(State) %>%summarize(sum_SB_wins=sum(SB_Wins,na.rm=T))
+SB_Wins_State<-FBall_States %>%group_by(State) %>%summarize(sum_SB_wins=sum(SB_Wins,na.rm=T))
+SB_Wins_State%>%arrange(-sum_SB_wins)
+```
+
+
+```{r}
+FBall_States %>%group_by(State) %>%summarize(mean_SB_wins=mean(SB_Wins,na.rm=T))%>%arrange(-mean_SB_wins)
+FBall_States %>%filter(State=="PA")%>%select(SB_Wins,NFL_Team)
+FBall_States %>%filter(State=="MA")%>%select(SB_Wins,NFL_Team)
+```
+
+
+```{r}
+FBall_States %>%group_by(NFL_Team)%>%summarize(max_SB_app=max(SB_Appearances))%>%arrange(-max_SB_app)
+FBall_States %>%group_by(NFL_Team)%>%summarize(max_SB_app=max(SB_Appearances))%>%arrange(max_SB_app)
+```
+
+```{r}
+FBall_States %>%summarize(median_SB_app=median(SB_Appearances))
+FBall_States %>%summarize(mean_SB_app=mean(SB_Appearances))
+FBall_States %>%summarize(median_SB_wins=median(SB_Wins))
+FBall_States %>%summarize(mean_SB_wins=mean(SB_Wins))
+```
+
+```{r}
+Appearanceless<-FBall_States%>% group_by(NFL_Team)%>%summarize(min_SB_appearance=min(SB_Appearances))%>%arrange(min_SB_appearance)
+Winless<-FBall_States%>%filter(SB_Wins==0)%>% group_by(NFL_Team)%>%summarize()
+Appearanceless
+Winless
+```
+
+```{r}
+FBall_States%>%filter(SB_Wins==0)%>%summarize(median_pop= median(Population))
+FBall_States%>%filter(SB_Wins>0)%>%summarize(median_pop=median(Population))
+```
+
+
+
+There are 32 Football Teams across 22 states and Washington,DC. The two teams with the most SB wins, are the Patriots and the Steelers. There are 4 teams who have not lost in their SB appearances, the Buccaneers, Saints, Ravens, and Jets. The Vikings and Bill have both been to the Superbowl four times but has yet to win a championship. The state of Pennsylvania has the most SB wins. However, Massachusetts has the highest average of SB Wins due to all of their Superbowl wins coming from the Patriots, while the Steelers have 6 SB wins and the Eagles only have 1. The Patriots have also had the most SB appearances with 11. The Browns, Jaguars, Lions, and Texans have never had a Superbowl appearance. Meanwhile, the Bengals, Bills, Cardinals, Chargers, Falcons, Panthers, Titans, and Vikings.
+
+The mean and median of Superbowl appearances are 3.375 and 3, respectively, while the mean and median of Superbowl wins are 1.688 and 1, respectively. The mean and median of these two variables were almost identical, so that means that the Superbowl appearance and wins of the league are symmetrically distributed. Also, the median population of states that have won a SB and have not won an SB is 10143357 and 11153262, respectively.
+
+
+
+```{r}
+FBall_States %>% select_if(is.numeric)%>% cor(use = "everything")%>% as.data.frame()%>% rownames_to_column()%>% pivot_longer(-1)%>% ggplot(aes(rowname,name,fill=value))+ 
+   geom_tile()+geom_text(aes(label=round(value,2)))+
+   xlab("")+ylab("")+coord_fixed()+scale_fill_gradient2(low = "Blue", high = "Yellow")
+
+```
+There is a strong correlation between Superbowl appearances and win, with an r-value of .87. It is apparent that the more times a team makes it to the Superbowl, the higher chance that team has of eventually winning the Superbowl. There seems to be no correlation between a state's population and its teams Superbowl appearances and wins.
+
+```{r}
+FBall_States$Has_Won_SB<-ifelse(FBall_States$SB_Wins==0,"No","Yes")
+
+
+ggplot(FBall_States, aes(x = State, y = SB_Appearances, fill=Has_Won_SB,stat="summary"))+
+geom_bar(stat="summary", position="dodge")+coord_flip()+theme_classic()+labs(x="State",y="Superbowl Appearances")+ggtitle("# of Superbowl Appearances and Wins per Team by State")+scale_y_continuous(lim=c(0,15))
+
+```
+The graph above depicts the number of Superbowl appearances by state, and if the state has won a Superbowl by team. The states of Texas and Florida have teams that have not made a SB appearance and teams that have won the SB. Also, that all of California's teams have made the Superbowl but not all of them had won one. 
+
+
+```{r}
+
+ggplot(FBall_States, aes(NFL_Team,SB_Wins))+
+geom_point(size=3,aes(color=Population))+
+scale_color_gradient(low="blue", high="red")+coord_flip() +labs(y= "# of Super Bowl Wins", x = "NFL Team")+ ggtitle("Amount of Superbowl Wins by NFL Team and State Population")
+```
+This plot depicts the amount of Superbowl wins by NFL team and the population of the team's state. The Patriots and Steelers have the most win, yet among the smallest state populations. As the populations are not clearly clustering, I can determine that population of state does not matter concerning Superbowl wins as multiple teams from large areas like Texas and Florida do not have Superbowl wins yet.
+
+```{r}
+FBNum<- FBall_States%>% select_if(is.numeric)%>% scale
+rownames(FBNum)<-FBall_States$NFL_Team
+FBPCA<-princomp(FBNum)
+names(FBPCA)
+summary(FBPCA, loadings = T)
+eigval<-FBPCA$sdev^2
+varprop=round(eigval/sum(eigval), 2)
+ggplot() + geom_bar(aes(y=varprop, x=1:3), stat="identity") + xlab("") + geom_path(aes(y=varprop, x=1:3))+ 
+  geom_text(aes(x=1:3, y=varprop, label=round(varprop, 2)), vjust=1, col="blue", size=5) + 
+  scale_y_continuous(breaks=seq(0, .6, .2), labels = scales::percent) + 
+  scale_x_continuous(breaks=1:10)
+FBdf <-  data.frame(PC1=FBPCA$scores[, 1], PC2=FBPCA$scores[, 2])
+
+ggplot(FBdf, aes(PC1, PC2)) + geom_point()
+FBPCA$scores %>% as.data.frame %>% cbind('NFL_Team', .) %>% top_n(2, Comp.1)
+FBPCA$scores %>% as.data.frame %>% cbind('NFL_Team', .) %>% top_n(2, wt=desc(Comp.1))
+
+
+
+
+
+```
+First, I prepared the data by normalizing it. This meant transforming observations to rows and abd variables to columns,centering it by subtracting the mean from each variable, scaling it by dividing it by the standard deviation. Next, I used princomp on my variables to get a correlation matrix.Next, I chose the number of principal components to keep, I chose 2 PC because accourding to the barplot, it accounted for 95% of my data.PC1 is a general axis and it revealed that SB appearances correlates with SB wins.
+
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

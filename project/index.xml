@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on My Website</title>
+    <link>/project/</link>
+    <description>Recent content in Projects on My Website</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 09 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project 2 </title>
+      <link>/project/project2/</link>
+      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Devin Williams DKW732
+Introduction: My original data consisted of 60 observations with 5 variables. The 5 variables were State, NFL Team, Superbowl appearances, Superbowl wins, and the conference,NFC or AFC, of the football team. I then added Superbowl win percentage, population of state,and a binary column with 1 indicating AFC conference and 0 indicating NFC conference. I then deleted the observations that did not have a football team or has never been to a Superbowl.</description>
+    </item>
+    
+    <item>
+      <title>Project1</title>
+      <link>/project/project1/</link>
+      <pubDate>Wed, 09 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Devin Williams DKW732 Project 1
+Introduction: The datasets I have chosen to observe are the Fball and State_POP dataset. The Fball dataset contains the variables of State,the state where the NFL team resides if applicable,NFL_Team, the NFL team being analyzed, SB_Appearances, the number of Superbowl appearance for the NFL team, and SB_Wins, the amount of Superbowls won by the NFL team. The State_POP dataset contains the variables of State and Population.</description>
+    </item>
+    
+  </channel>
+</rss>

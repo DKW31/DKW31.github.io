@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Devin Williams" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../../../../img/favicon.ico">
+    <title>Panagrams and Phython</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../../../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../../../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../../../../post/">BLOG</a></li>
+        
+        <li><a href="../../../../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../../../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../../../../post/2020/12/10/panagrams/">Panagrams and Phython</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         December 10, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="panagrams-and-phython" class="section level1">
+<h1>Panagrams and Phython</h1>
+<p>So, we have also been learning about the coding language phython in my Computational Biology class over the last two weeks and one of the functions we have made in class is count_chars. I think function is really cool because it can check validity of panagrams without having to do it manually.A panagram is a sentence in which every letter of the english alphabet is used in the sentence. A really popular panagram is the sentence,&quot;The quick brown fox jumps over the lazy dog&quot;. If you don't believe me, test it out in phython!</p>
+<p><img src="../../../../../img/BrownFox.jpeg" /> Panagram imagery.</p>
+<div id="the-code" class="section level2">
+<h2>The Code</h2>
+<p>So to discover that the validity of a panagram, the newly created function of count_chars was made below. This code is able to count the amount of characters in each string.</p>
+<pre class="python"><code>panagram=&quot;The quick brown fox jumps over the lazy dog&quot;
+
+def count_chars(panagram):
+ counts = {} 
+ for c in panagram: 
+  if c in counts: 
+    counts[c]+=1 
+  else:
+    counts[c]=1 
+ for c in counts:
+  print(c, &quot;appears&quot;, counts[c],&quot;times&quot;)
+ 
+count_chars(panagram)</code></pre>
+<pre><code>## T appears 1 times
+## h appears 2 times
+## e appears 3 times
+##   appears 8 times
+## q appears 1 times
+## u appears 2 times
+## i appears 1 times
+## c appears 1 times
+## k appears 1 times
+## b appears 1 times
+## r appears 2 times
+## o appears 4 times
+## w appears 1 times
+## n appears 1 times
+## f appears 1 times
+## x appears 1 times
+## j appears 1 times
+## m appears 1 times
+## p appears 1 times
+## s appears 1 times
+## v appears 1 times
+## t appears 1 times
+## l appears 1 times
+## a appears 1 times
+## z appears 1 times
+## y appears 1 times
+## d appears 1 times
+## g appears 1 times</code></pre>
+<p>See? Every letter appears at least once in this sentence. Now you may ask yourself, why are panagrams relevant and what is their purpose? This answer is incredibly simple. Panagrams are used to test out any typewriter/keyboard technology in a natural way, as if to simulate typewriting. Several other panagrams can be used such as:</p>
+<p>-Sphinx of black quartz, judge my vow. -The five boxing wizards jump quickly -Sympathizing would fix Quaker objectives.</p>
+<p>And my personal favorite: -This Pangram contains four a’s, one b, two c’s, one d, thirty e’s, six f’s, five g’s, seven h’s, eleven i’s, one j, one k, two l’s, two m’s, eighteen n’s, fifteen o’s, two p’s, one q, five r’s, twenty-seven s’s, eighteen t’s, two u’s, seven v’s, eight w’s, two x’s, three y’s, &amp; one z.</p>
+<p>That's all I have today, besides a motivational message via R and Phython. So remember to:</p>
+<pre class="r"><code>library(reticulate)
+Be&lt;-&quot;Take&quot;</code></pre>
+<pre class="python"><code>Bold_and =&quot;Chances&quot;
+print(r.Be,Bold_and)</code></pre>
+<pre><code>## Take Chances</code></pre>
+<p>So make sure to live a life worth living!</p>
+<p>Sincerely, Devin K. Williams</p>
+</div>
+</div>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../../../../js/docs.min.js"></script>
+<script src="../../../../../js/main.js"></script>
+
+<script src="../../../../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

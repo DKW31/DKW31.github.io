@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Devin Williams" />
+    
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
+    <title>Project1</title>
+    <meta name="generator" content="Hugo 0.79.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="../../post/">BLOG</a></li>
+        
+        <li><a href="../../projects/">PROJECTS</a></li>
+        
+        <li><a href="../../resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="../../project/project1/">Project1</a></strong>
+          </h3>
+        </div>
+ 
+<div class="blog-title">
+          <h4>
+         December 9, 2020 
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>Devin Williams DKW732 Project 1</p>
+<p>Introduction: The datasets I have chosen to observe are the Fball and State_POP dataset. The Fball dataset contains the variables of State,the state where the NFL team resides if applicable,NFL_Team, the NFL team being analyzed, SB_Appearances, the number of Superbowl appearance for the NFL team, and SB_Wins, the amount of Superbowls won by the NFL team. The State_POP dataset contains the variables of State and Population. These datasets were made by me in a googlesheet after researching the location and Superbowl record of each team, and population of each state.The websites visited for this data were <a href="https://state.1keydata.com/nfl-teams-by-state.php,https://www.statista.com/statistics/266516/number-of-super-bowl-wins-by-nfl-team/,https://www.statista.com/statistics/784497/teams-ranked-by-super-bowl-appearances-in-nfl-history/" class="uri">https://state.1keydata.com/nfl-teams-by-state.php,https://www.statista.com/statistics/266516/number-of-super-bowl-wins-by-nfl-team/,https://www.statista.com/statistics/784497/teams-ranked-by-super-bowl-appearances-in-nfl-history/</a>, and <a href="https://www.infoplease.com/us/states/state-population-by-rank" class="uri">https://www.infoplease.com/us/states/state-population-by-rank</a>. The datasets were interesting to me because I find obscure sports trivia reall amusing, and wanted to analyze if larger population areas yielded more Superbowl wins.</p>
+<pre class="r"><code>library(readr)
+Fball &lt;- read_csv(&quot;Copy of Football Team (NO CITY)_NO SBW - Sheet1 (2).csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   State = col_character(),
+##   NFL_Team = col_character(),
+##   SB_Appearances = col_double(),
+##   SB_Wins = col_double()
+## )</code></pre>
+<pre class="r"><code>head(Fball)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   State NFL_Team  SB_Appearances SB_Wins
+##   &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt;
+## 1 AL    &lt;NA&gt;                  NA      NA
+## 2 AK    &lt;NA&gt;                  NA      NA
+## 3 AZ    Cardinals              1       0
+## 4 AR    &lt;NA&gt;                  NA      NA
+## 5 CA    Rams                   4       1
+## 6 CA    Chargers               1       0</code></pre>
+<pre class="r"><code>library(readr)
+State_POP &lt;- read_csv(&quot;State POP - Sheet1 (1).csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   State = col_character(),
+##   Population = col_number()
+## )</code></pre>
+<pre class="r"><code>head(State_POP)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   State Population
+##   &lt;chr&gt;      &lt;dbl&gt;
+## 1 AL       4903185
+## 2 AK        731545
+## 3 AZ       7278717
+## 4 AR       3017825
+## 5 CA      39512223
+## 6 CO       5758736</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ dplyr   1.0.2
+## ✓ tibble  3.0.3     ✓ stringr 1.4.0
+## ✓ tidyr   1.1.1     ✓ forcats 0.5.0
+## ✓ purrr   0.3.4</code></pre>
+<pre><code>## ── Conflicts ─────────────────
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>Football&lt;-Fball%&gt;%full_join(State_POP)</code></pre>
+<pre><code>## Joining, by = &quot;State&quot;</code></pre>
+<pre class="r"><code>FBall_States&lt;-Football%&gt;%filter(!is.na(NFL_Team))</code></pre>
+<p>I used a full join to join my datasets by the &quot;State&quot; variable because I wanted to keep all of the rows in both bottom and omitted all of the rows that did not have an NFL team. The potenial problem of this is that when trying to find the mean of Superbowl wins or appearances, it does not take into account states without a football team.</p>
+<pre class="r"><code>FBall_States%&gt;%summarize_all(n_distinct)</code></pre>
+<pre><code>## # A tibble: 1 x 5
+##   State NFL_Team SB_Appearances SB_Wins Population
+##   &lt;int&gt;    &lt;int&gt;          &lt;int&gt;   &lt;int&gt;      &lt;int&gt;
+## 1    23       32              9       7         23</code></pre>
+<pre class="r"><code>FBall_States%&gt;%group_by(NFL_Team)%&gt;%summarize(max_SB_wins=max(SB_Wins))%&gt;%arrange(-max_SB_wins)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 32 x 2
+##    NFL_Team      max_SB_wins
+##    &lt;chr&gt;               &lt;dbl&gt;
+##  1 Patriots                6
+##  2 Steelers                6
+##  3 49ers                   5
+##  4 Cowboys                 5
+##  5 Giants                  4
+##  6 Packers                 4
+##  7 Broncos                 3
+##  8 Football Team           3
+##  9 Raiders                 3
+## 10 Chiefs                  2
+## # … with 22 more rows</code></pre>
+<pre class="r"><code>SB_PCT&lt;-FBall_States%&gt;%mutate(SB_W_PCT=SB_Wins/SB_Appearances)
+SB_PCT%&gt;%filter(SB_W_PCT==1)%&gt;%group_by(State,NFL_Team)</code></pre>
+<pre><code>## # A tibble: 4 x 6
+## # Groups:   State, NFL_Team [4]
+##   State NFL_Team   SB_Appearances SB_Wins Population SB_W_PCT
+##   &lt;chr&gt; &lt;chr&gt;               &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+## 1 FL    Buccaneers              1       1   21477737        1
+## 2 LA    Saints                  1       1    4648794        1
+## 3 MD    Ravens                  2       2    6045680        1
+## 4 NY    Jets                    1       1   19453561        1</code></pre>
+<pre class="r"><code>SB_PCT%&gt;%filter(SB_Appearances&gt;0)%&gt;%filter(SB_W_PCT==0)%&gt;%arrange(-SB_Appearances)</code></pre>
+<pre><code>## # A tibble: 8 x 6
+##   State NFL_Team  SB_Appearances SB_Wins Population SB_W_PCT
+##   &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;
+## 1 MN    Vikings                4       0    5639632        0
+## 2 NY    Bills                  4       0   19453561        0
+## 3 GA    Falcons                2       0   10617423        0
+## 4 NC    Panthers               2       0   10488084        0
+## 5 OH    Bengals                2       0   11689100        0
+## 6 AZ    Cardinals              1       0    7278717        0
+## 7 CA    Chargers               1       0   39512223        0
+## 8 TN    Titans                 1       0    6833174        0</code></pre>
+<pre class="r"><code>FBall_States %&gt;%group_by(State) %&gt;%summarize(sum_SB_wins=sum(SB_Wins,na.rm=T))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 23 x 2
+##    State sum_SB_wins
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 AZ              0
+##  2 CA              6
+##  3 CO              3
+##  4 DC              3
+##  5 FL              3
+##  6 GA              0
+##  7 IL              1
+##  8 IN              2
+##  9 LA              1
+## 10 MA              6
+## # … with 13 more rows</code></pre>
+<pre class="r"><code>SB_Wins_State&lt;-FBall_States %&gt;%group_by(State) %&gt;%summarize(sum_SB_wins=sum(SB_Wins,na.rm=T))</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>SB_Wins_State%&gt;%arrange(-sum_SB_wins)</code></pre>
+<pre><code>## # A tibble: 23 x 2
+##    State sum_SB_wins
+##    &lt;chr&gt;       &lt;dbl&gt;
+##  1 PA              7
+##  2 CA              6
+##  3 MA              6
+##  4 NY              5
+##  5 TX              5
+##  6 WI              4
+##  7 CO              3
+##  8 DC              3
+##  9 FL              3
+## 10 NV              3
+## # … with 13 more rows</code></pre>
+<pre class="r"><code>FBall_States %&gt;%group_by(State) %&gt;%summarize(mean_SB_wins=mean(SB_Wins,na.rm=T))%&gt;%arrange(-mean_SB_wins)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 23 x 2
+##    State mean_SB_wins
+##    &lt;chr&gt;        &lt;dbl&gt;
+##  1 MA             6  
+##  2 WI             4  
+##  3 PA             3.5
+##  4 CO             3  
+##  5 DC             3  
+##  6 NV             3  
+##  7 TX             2.5
+##  8 CA             2  
+##  9 IN             2  
+## 10 MD             2  
+## # … with 13 more rows</code></pre>
+<pre class="r"><code>FBall_States %&gt;%filter(State==&quot;PA&quot;)%&gt;%select(SB_Wins,NFL_Team)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   SB_Wins NFL_Team
+##     &lt;dbl&gt; &lt;chr&gt;   
+## 1       1 Eagles  
+## 2       6 Steelers</code></pre>
+<pre class="r"><code>FBall_States %&gt;%filter(State==&quot;MA&quot;)%&gt;%select(SB_Wins,NFL_Team)</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   SB_Wins NFL_Team
+##     &lt;dbl&gt; &lt;chr&gt;   
+## 1       6 Patriots</code></pre>
+<pre class="r"><code>FBall_States %&gt;%group_by(NFL_Team)%&gt;%summarize(max_SB_app=max(SB_Appearances))%&gt;%arrange(-max_SB_app)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 32 x 2
+##    NFL_Team      max_SB_app
+##    &lt;chr&gt;              &lt;dbl&gt;
+##  1 Patriots              11
+##  2 Broncos                8
+##  3 Cowboys                8
+##  4 Steelers               8
+##  5 49ers                  7
+##  6 Dolphins               5
+##  7 Football Team          5
+##  8 Giants                 5
+##  9 Packers                5
+## 10 Raiders                5
+## # … with 22 more rows</code></pre>
+<pre class="r"><code>FBall_States %&gt;%group_by(NFL_Team)%&gt;%summarize(max_SB_app=max(SB_Appearances))%&gt;%arrange(max_SB_app)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 32 x 2
+##    NFL_Team   max_SB_app
+##    &lt;chr&gt;           &lt;dbl&gt;
+##  1 Browns              0
+##  2 Jaguars             0
+##  3 Lions               0
+##  4 Texans              0
+##  5 Buccaneers          1
+##  6 Cardinals           1
+##  7 Chargers            1
+##  8 Jets                1
+##  9 Saints              1
+## 10 Titans              1
+## # … with 22 more rows</code></pre>
+<pre class="r"><code>FBall_States %&gt;%summarize(median_SB_app=median(SB_Appearances))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   median_SB_app
+##           &lt;dbl&gt;
+## 1             3</code></pre>
+<pre class="r"><code>FBall_States %&gt;%summarize(mean_SB_app=mean(SB_Appearances))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   mean_SB_app
+##         &lt;dbl&gt;
+## 1        3.38</code></pre>
+<pre class="r"><code>FBall_States %&gt;%summarize(median_SB_wins=median(SB_Wins))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   median_SB_wins
+##            &lt;dbl&gt;
+## 1              1</code></pre>
+<pre class="r"><code>FBall_States %&gt;%summarize(mean_SB_wins=mean(SB_Wins))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   mean_SB_wins
+##          &lt;dbl&gt;
+## 1         1.69</code></pre>
+<pre class="r"><code>Appearanceless&lt;-FBall_States%&gt;% group_by(NFL_Team)%&gt;%summarize(min_SB_appearance=min(SB_Appearances))%&gt;%arrange(min_SB_appearance)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>Winless&lt;-FBall_States%&gt;%filter(SB_Wins==0)%&gt;% group_by(NFL_Team)%&gt;%summarize()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre class="r"><code>Appearanceless</code></pre>
+<pre><code>## # A tibble: 32 x 2
+##    NFL_Team   min_SB_appearance
+##    &lt;chr&gt;                  &lt;dbl&gt;
+##  1 Browns                     0
+##  2 Jaguars                    0
+##  3 Lions                      0
+##  4 Texans                     0
+##  5 Buccaneers                 1
+##  6 Cardinals                  1
+##  7 Chargers                   1
+##  8 Jets                       1
+##  9 Saints                     1
+## 10 Titans                     1
+## # … with 22 more rows</code></pre>
+<pre class="r"><code>Winless</code></pre>
+<pre><code>## # A tibble: 12 x 1
+##    NFL_Team 
+##    &lt;chr&gt;    
+##  1 Bengals  
+##  2 Bills    
+##  3 Browns   
+##  4 Cardinals
+##  5 Chargers 
+##  6 Falcons  
+##  7 Jaguars  
+##  8 Lions    
+##  9 Panthers 
+## 10 Texans   
+## 11 Titans   
+## 12 Vikings</code></pre>
+<pre class="r"><code>FBall_States%&gt;%filter(SB_Wins==0)%&gt;%summarize(median_pop= median(Population))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   median_pop
+##        &lt;dbl&gt;
+## 1  11153262.</code></pre>
+<pre class="r"><code>FBall_States%&gt;%filter(SB_Wins&gt;0)%&gt;%summarize(median_pop=median(Population))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   median_pop
+##        &lt;dbl&gt;
+## 1   10143357</code></pre>
+<p>There are 32 Football Teams across 22 states and Washington,DC. The two teams with the most SB wins, are the Patriots and the Steelers. There are 4 teams who have not lost in their SB appearances, the Buccaneers, Saints, Ravens, and Jets. The Vikings and Bill have both been to the Superbowl four times but has yet to win a championship. The state of Pennsylvania has the most SB wins. However, Massachusetts has the highest average of SB Wins due to all of their Superbowl wins coming from the Patriots, while the Steelers have 6 SB wins and the Eagles only have 1. The Patriots have also had the most SB appearances with 11. The Browns, Jaguars, Lions, and Texans have never had a Superbowl appearance. Meanwhile, the Bengals, Bills, Cardinals, Chargers, Falcons, Panthers, Titans, and Vikings.</p>
+<p>The mean and median of Superbowl appearances are 3.375 and 3, respectively, while the mean and median of Superbowl wins are 1.688 and 1, respectively. The mean and median of these two variables were almost identical, so that means that the Superbowl appearance and wins of the league are symmetrically distributed. Also, the median population of states that have won a SB and have not won an SB is 10143357 and 11153262, respectively.</p>
+<pre class="r"><code>FBall_States %&gt;% select_if(is.numeric)%&gt;% cor(use = &quot;everything&quot;)%&gt;% as.data.frame()%&gt;% rownames_to_column()%&gt;% pivot_longer(-1)%&gt;% ggplot(aes(rowname,name,fill=value))+ 
+   geom_tile()+geom_text(aes(label=round(value,2)))+
+   xlab(&quot;&quot;)+ylab(&quot;&quot;)+coord_fixed()+scale_fill_gradient2(low = &quot;Blue&quot;, high = &quot;Yellow&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-13-1.png" width="672" /> There is a strong correlation between Superbowl appearances and win, with an r-value of .87. It is apparent that the more times a team makes it to the Superbowl, the higher chance that team has of eventually winning the Superbowl. There seems to be no correlation between a state's population and its teams Superbowl appearances and wins.</p>
+<pre class="r"><code>FBall_States$Has_Won_SB&lt;-ifelse(FBall_States$SB_Wins==0,&quot;No&quot;,&quot;Yes&quot;)
+
+
+ggplot(FBall_States, aes(x = State, y = SB_Appearances, fill=Has_Won_SB,stat=&quot;summary&quot;))+
+geom_bar(stat=&quot;summary&quot;, position=&quot;dodge&quot;)+coord_flip()+theme_classic()+labs(x=&quot;State&quot;,y=&quot;Superbowl Appearances&quot;)+ggtitle(&quot;# of Superbowl Appearances and Wins per Team by State&quot;)+scale_y_continuous(lim=c(0,15))</code></pre>
+<pre><code>## No summary function supplied, defaulting to `mean_se()`</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-14-1.png" width="672" /> The graph above depicts the number of Superbowl appearances by state, and if the state has won a Superbowl by team. The states of Texas and Florida have teams that have not made a SB appearance and teams that have won the SB. Also, that all of California's teams have made the Superbowl but not all of them had won one.</p>
+<pre class="r"><code>ggplot(FBall_States, aes(NFL_Team,SB_Wins))+
+geom_point(size=3,aes(color=Population))+
+scale_color_gradient(low=&quot;blue&quot;, high=&quot;red&quot;)+coord_flip() +labs(y= &quot;# of Super Bowl Wins&quot;, x = &quot;NFL Team&quot;)+ ggtitle(&quot;Amount of Superbowl Wins by NFL Team and State Population&quot;)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-15-1.png" width="672" /> This plot depicts the amount of Superbowl wins by NFL team and the population of the team's state. The Patriots and Steelers have the most win, yet among the smallest state populations. As the populations are not clearly clustering, I can determine that population of state does not matter concerning Superbowl wins as multiple teams from large areas like Texas and Florida do not have Superbowl wins yet.</p>
+<pre class="r"><code>FBNum&lt;- FBall_States%&gt;% select_if(is.numeric)%&gt;% scale
+rownames(FBNum)&lt;-FBall_States$NFL_Team
+FBPCA&lt;-princomp(FBNum)
+names(FBPCA)</code></pre>
+<pre><code>## [1] &quot;sdev&quot;     &quot;loadings&quot; &quot;center&quot;   &quot;scale&quot;    &quot;n.obs&quot;    &quot;scores&quot;   &quot;call&quot;</code></pre>
+<pre class="r"><code>summary(FBPCA, loadings = T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2     Comp.3
+## Standard deviation     1.3475119 0.9843953 0.34846445
+## Proportion of Variance 0.6247874 0.3334311 0.04178149
+## Cumulative Proportion  0.6247874 0.9582185 1.00000000
+## 
+## Loadings:
+##                Comp.1 Comp.2 Comp.3
+## SB_Appearances  0.707         0.707
+## SB_Wins         0.707        -0.707
+## Population            -1.000</code></pre>
+<pre class="r"><code>eigval&lt;-FBPCA$sdev^2
+varprop=round(eigval/sum(eigval), 2)
+ggplot() + geom_bar(aes(y=varprop, x=1:3), stat=&quot;identity&quot;) + xlab(&quot;&quot;) + geom_path(aes(y=varprop, x=1:3))+ 
+  geom_text(aes(x=1:3, y=varprop, label=round(varprop, 2)), vjust=1, col=&quot;blue&quot;, size=5) + 
+  scale_y_continuous(breaks=seq(0, .6, .2), labels = scales::percent) + 
+  scale_x_continuous(breaks=1:10)</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code>FBdf &lt;-  data.frame(PC1=FBPCA$scores[, 1], PC2=FBPCA$scores[, 2])
+
+ggplot(FBdf, aes(PC1, PC2)) + geom_point()</code></pre>
+<p><img src="../../project/project1_files/figure-html/unnamed-chunk-16-2.png" width="672" /></p>
+<pre class="r"><code>FBPCA$scores %&gt;% as.data.frame %&gt;% cbind(&#39;NFL_Team&#39;, .) %&gt;% top_n(2, Comp.1)</code></pre>
+<pre><code>##          &quot;NFL_Team&quot;  Comp.1    Comp.2     Comp.3
+## Patriots   NFL_Team 3.54403 0.6738063  0.3277087
+## Steelers   NFL_Team 2.77595 0.1264900 -0.4244054</code></pre>
+<pre class="r"><code>FBPCA$scores %&gt;% as.data.frame %&gt;% cbind(&#39;NFL_Team&#39;, .) %&gt;% top_n(2, wt=desc(Comp.1))</code></pre>
+<pre><code>##         &quot;NFL_Team&quot;    Comp.1     Comp.2     Comp.3
+## Jaguars   NFL_Team -1.489631 -0.6297953 -0.2203217
+## Texans    NFL_Team -1.495859 -1.3217042 -0.2062038</code></pre>
+<p>First, I prepared the data by normalizing it. This meant transforming observations to rows and abd variables to columns,centering it by subtracting the mean from each variable, scaling it by dividing it by the standard deviation. Next, I used princomp on my variables to get a correlation matrix.Next, I chose the number of principal components to keep, I chose 2 PC because accourding to the barplot, it accounted for 95% of my data.PC1 is a general axis and it revealed that SB appearances correlates with SB wins.</p>
+<p>Add a new chunk by clicking the <em>Insert Chunk</em> button on the toolbar or by pressing <em>Cmd+Option+I</em>.</p>
+<p>When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the <em>Preview</em> button or press <em>Cmd+Shift+K</em> to preview the HTML file).</p>
+<p>The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike <em>Knit</em>, <em>Preview</em> does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.</p>
+
+            
+        <hr>         <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div> 
+            </div>
+          </div>
+
+   <hr>  <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div> 
+        </div>
+      </div>
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
+
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

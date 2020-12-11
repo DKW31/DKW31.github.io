@@ -1,0 +1,229 @@
+---
+title: "Project 2 "
+author: "Devin"
+date: "2020-12-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Devin Williams
+DKW732
+
+Introduction: My original data consisted of 60 observations with 5 variables. The 5 variables were State, NFL Team, Superbowl appearances, Superbowl wins, and the conference,NFC or AFC, of the football team. I then added Superbowl win percentage, population of state,and a binary column with 1 indicating AFC conference and 0 indicating NFC conference. I then deleted the observations that did not have a football team or has never been to a Superbowl.
+
+
+```{r }
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(rstatix)
+library(sandwich); library(lmtest)
+FBall <- read_csv("Project 2 Football Just Conf - Sheet1.csv")
+State_POP <- read_csv("State POP - Sheet1 (1).csv")
+FBall<-FBall%>%full_join(State_POP)
+FBall<-FBall%>%filter(!is.na(NFL_Team))
+FBall<-FBall%>%mutate(SB_W_PCT=SB_Wins/SB_Appearances)
+FBall<-FBall%>%filter(!is.na(NFL_Team))
+FBall<-FBall%>%mutate(SB_W_PCT=SB_Wins/SB_Appearances)
+FBall<-FBall%>%filter(!is.na(SB_W_PCT))
+FBall<-FBall%>%mutate(AFC_or_NFC=ifelse(FBall$Conference=="AFC",1,0)) 
+glimpse(FBall)
+FBall%>%summarize_all(n_distinct)
+```
+
+```{r}
+#1
+group<-FBall$Conference
+DV <- FBall %>% select(SB_Wins,SB_Appearances, SB_W_PCT)
+sapply(split(DV,group), mshapiro_test)
+box_m(DV,group)
+man1<-manova(cbind(SB_Wins,SB_Appearances,SB_W_PCT)~Conference, data=FBall)
+summary(man1)
+summary.aov(man1)
+FBall%>%group_by(Conference)%>%summarize(mean(SB_Wins),mean(SB_Appearances),mean(SB_W_PCT))
+pairwise.t.test(FBall$SB_Appearances, FBall$SB_Wins,FBall$SB_W_PCT, p.adj = "none")
+1-.95^6
+.05/6
+```
+
+All of my Manova assumptions were met.There also were not any significant differences in the means of my numerical values when grouped by Conference.A total of 6 tests was ran, a manova, an anova and four post hoc tests. This does not include the assumption tests.There is a 26.5% chance a type 1 error was made.The bonfferonii correction should be .008 (still significant).The Manova assumptions were met because the NFL divided up their teams equally by conference. There is a significant difference in teams that have had 3-5 SB appearancesand 0 wins,3-5 SB appearances and only 1 win.
+
+```{r}
+summary(aov(SB_W_PCT~Conference,data=FBall))
+OBS_F<-.011
+set.seed(19)
+Fs<-replicate(20,{ #do everything in curly braces 5000 times and save the output
+new<-FBall%>%mutate(SB_W_PCT=sample(SB_W_PCT)) #randomly permute response variable (len)
+#compute the F-statistic by hand
+SSW<- new%>%group_by(Conference)%>%summarize(SSW=sum((SB_W_PCT-mean(SB_W_PCT))^2))%>%
+summarize(sum(SSW))%>%pull
+SSB<- new%>%mutate(mean=mean(SB_W_PCT))%>%group_by(Conference)%>%mutate(groupmean=mean(SB_W_PCT))%>%
+summarize(SSB=sum((mean-groupmean)^2))%>%summarize(sum(SSB))%>%pull
+(SSB/1)/(SSW/14) #compute F statistic (num df = K-1 = 3-1, denom df = N-K = 60-3)
+})%>%glimpse
+hist(Fs, prob=T); abline(v = OBS_F, col="red",add=T)
+mean(Fs>OBS_F) #p-value
+```
+
+The null hypothesis is that there is not a difference between SB win percentage means between conferences. The alternative hypothesis is that there is a difference between SB win percentage means between conferences.The p-value is effectively .8, which means I accept my null hypothesis. Of my 5000 F statistics, some produced an F-Statistic higher than my observed so there is not a significant relationship between conference and SB win percentage. My replication is at 20 instead of at 5000, due to reducing the number of errors in the html.
+
+```{r}
+#3
+FBall$SBA_c=FBall$SB_Appearances-mean(FBall$SB_Appearances)
+FBall$SBW_c<-FBall$SB_Wins-mean(FBall$SB_Wins)
+Fbfit<-lm(SB_Wins~Conference*SBA_c, data= FBall)
+summary(Fbfit)
+```
+
+After mean centering the Superbowl appearances,the odss of having Superbowl wins go up if the team is from the NFC by .177,go ups by .57 per Superbowl appearances, and up by .167 if they are NFC and have Superbowl appearnces.
+
+```{r}
+ggplot(FBall, aes(SB_Wins,SBA_c, color = Conference)) +geom_point()+geom_smooth(method="lm", se=F)
+bptest(Fbfit)
+
+resids<-Fbfit$residuals
+fitvals<-Fbfit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')
+ks.test(resids, "pnorm", mean=0, sd(resids)) 
+(sum((FBall$SB_Wins-mean(FBall$SB_Wins))^2)-sum(Fbfit$residuals^2))/sum((FBall$SB_Wins-mean(FBall$SB_Wins))^2)
+```
+
+My data passes assumptions of linearity,normality, and homoskedasticity. My model explains 75% of the variation in the outcome.
+
+```{r}
+coeftest(Fbfit)[,1:2]
+coeftest(Fbfit, vcov=vcovHC(Fbfit))[,1:2]
+```
+
+The standard errors only slightly changed when robust and are not significant.
+
+```{r}
+set.seed(4999)
+samp_distn<-replicate(5000, {
+boot_FB <- sample_frac(FBall, replace=TRUE) #take bootstrap sample of rows
+fit <-lm(SB_Wins~Conference*SBA_c, data= boot_FB)  #fit model on bootstrap sample
+coef(fit) #save coefs
+})
+samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
+```
+
+```{r}
+class_diag <- function(probs,truth){
+#CONFUSION MATRIX: CALCULATE ACCURACY, TPR, TNR, PPV
+tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+f1=2*(sens*ppv)/(sens+ppv)
+if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+#CALCULATE EXACT AUC
+ord<-order(probs, decreasing=TRUE)
+probs <- probs[ord]; truth <- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth))
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+n <- length(TPR)
+auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,f1,auc)
+}
+```
+
+```{r}
+#5
+set.seed(4999)
+Fbfit2<-glm(AFC_or_NFC~SB_Wins+SB_Appearances, data=FBall, family="binomial")
+summary(Fbfit2)
+probs<-predict(Fbfit2,type="response") #get predicted probs from the model
+table(predict=as.numeric(probs>.5),truth=FBall$AFC_or_NFC)%>%addmargins%>%t()
+class_diag(probs,FBall$AFC_or_NFC)
+```
+
+The logodds of being AFC goes down .1771 per Suber Bowl Win, and up .2175 per Superbowl appearance.The accuracy is .607 which means that it was able to correctly classify 60 cases. The tpr,tnr,ppv, and auc was .385, .8,.625, and .559, respectively. This means that the model is bad based off the auc classificiation is bad. This model could tell which team were AFC pretty well, but could not tell which teams were NFC that well. The precision of this test was also not the greatest.
+
+```{r}
+FBall$logit<-predict(Fbfit2) #get predicted log-odds (logits)
+
+#plot logit scores for each truth category
+
+
+FBall%>%mutate(Conf=factor(Conference,levels=c("AFC","NFC")))%>%ggplot(aes(logit, fill=Conf))+geom_density(alpha=.3)+
+  geom_vline(xintercept=0,lty=2)
+```
+
+```{r}
+library(plotROC)
+ROCplot<-ggplot(FBall)+geom_roc(aes(d=AFC_or_NFC,m=probs), n.cuts=0) 
+
+ROCplot
+
+#as soon as you build your ROC curve, you can compute the AUC with
+calc_auc(ROCplot)
+```
+This model is bad due to it having a low auc of .559.
+
+```{r}
+#6
+Fbfit3<-lm(AFC_or_NFC~SB_W_PCT+Population+SB_Wins+SB_Appearances,data = FBall,family="binomial")
+probs2<-predict(Fbfit3,type="response") #get predicted probs from the model
+class_diag(probs2,FBall$AFC_or_NFC)
+```
+
+```{r}
+set.seed(4999)
+k=5 #choose number of folds
+data<-FBall[sample(nrow(FBall)),] #randomly order rows
+folds<-cut(seq(1:nrow(FBall)),breaks=k,labels=F) #create folds
+diags<-NULL
+for(i in 1:k){
+## Create training and test sets
+train<-data[folds!=i,]
+test<-data[folds==i,]
+truth<-test$AFC_or_NFC ## Truth labels for fold i
+## Train model on training set (all but fold i)
+fit5<-glm(AFC_or_NFC~SB_W_PCT+Population+SB_Wins+SB_Appearances,data=train,family="binomial")
+## Test model on test set (fold i)
+probs3<-predict(fit5,newdata = test,type="response")
+ #Get diagnostics for fold i
+diags<-rbind(diags,class_diag(probs3,truth))
+}
+summarize_all(diags,mean) #average diagnostics across all k folds
+```
+This model had an acc,tpr,tnr, ppv, and auc of .28,.267,.333,.207, and auc of .3 respectively. All of the classification diagnostics went down from the previous model which represents that the previous model may have been a coincidence with its predicting abilities.An AUC as low as .3 means that this model is very bad for predicting.
+```{r}
+library(glmnet)
+y<-as.matrix(FBall$AFC_or_NFC) #grab response
+FBall_preds<-model.matrix(AFC_or_NFC~SB_W_PCT+Population+SB_Wins+SB_Appearances,data=FBall)[,-1] #predictors (drop intercept)
+cv<-cv.glmnet(FBall_preds,y,family="binomial")
+lasso_fit<-glmnet(FBall_preds,y,family="binomial",lambda=cv$lambda.1se)
+coef(lasso_fit)
+```
+None of my variables were retained, so I just selected the Superbowl win percentage and ran that in my updated model.
+```{r}
+set.seed(4999)
+k=5 #choose number of folds
+data<-FBall[sample(nrow(FBall)),] #randomly order rows
+folds<-cut(seq(1:nrow(FBall)),breaks=k,labels=F) #create folds
+diags<-NULL
+for(i in 1:k){
+## Create training and test sets
+train<-data[folds!=i,]
+test<-data[folds==i,]
+truth<-test$AFC_or_NFC ## Truth labels for fold i
+## Train model on training set (all but fold i)
+fit6<-glm(AFC_or_NFC~SB_W_PCT,data=train,family="binomial")
+## Test model on test set (fold i)
+probs4<-predict(fit6,newdata = test,type="response")
+ #Get diagnostics for fold i
+diags<-rbind(diags,class_diag(probs4,truth))
+}
+summarize_all(diags,mean) #average diagnostics across all k folds
+```
+This model had an acc,tpr,tnr, ppv, and auc of .28,.167,.417,.15, and auc of .20 respectively. The AUC of this model went down significantly to .209, meaning that the model is unlikely to predict anything from the data.
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
